@@ -1,27 +1,39 @@
 "use strict";
 
-let randomNumber = Math.trunc(Math.random() * 20 + 1);
+const displayMessage = function (message) {
+  document.querySelector(".message").textContent = message;
+};
+
+const updateScore = function () {
+  document.querySelector(".score").textContent = score;
+};
+
+const setBackgroundColor = function (color) {
+  document.querySelector("body").style.backgroundColor = color;
+};
+
+const createRandomNumber = function () {
+  return Math.trunc(Math.random() * 20 + 1);
+};
+
+let randomNumber = createRandomNumber();
 let score = 20;
 
 document.querySelector(".check").addEventListener("click", function () {
   const guess = Number(document.querySelector(".guess").value);
 
-  if (score > 0) {
-    if (guess) {
+  if (score > 1) {
+    if (!guess) {
+      displayMessage("⛔ No number!");
+    } else {
       score--;
-      document.querySelector(".score").textContent = score;
+      updateScore();
 
-      if (guess > randomNumber) {
-        document.querySelector(".message").textContent = "Too high!";
-      } else if (guess < randomNumber) {
-        document.querySelector(".message").textContent = "Too low!";
-      } else if (guess === randomNumber) {
-        document.querySelector(".message").textContent = "✔ Correct Number!";
+      if (guess === randomNumber) {
+        displayMessage("✔ Correct Number!");
+        setBackgroundColor("#60b347");
 
         document.querySelector(".number").textContent = randomNumber;
-
-        document.querySelector("body").style.backgroundColor = "#60b347";
-
         document.querySelector(".number").style.width = "30rem";
 
         const highscore = document.querySelector(".highscore");
@@ -29,32 +41,27 @@ document.querySelector(".check").addEventListener("click", function () {
         if (score > highscore.textContent) {
           highscore.textContent = score;
         }
-      }
-    } else {
-      document.querySelector(".message").textContent =
-        "You didn't type a number!";
-    }
-  } else {
-    document.querySelector(".message").textContent =
-      "❌ You missed all atempts!";
+      } else if (guess !== randomNumber) {
+        const message = guess > randomNumber ? "📈 Too high!" : "📉 Too low!";
 
-    document.querySelector("body").style.backgroundColor = "#a83232";
+        displayMessage(message);
+      }
+    }
+  } else if (score <= 1) {
+    displayMessage("❌ You missed all atempts!");
+    setBackgroundColor("#a83232");
   }
 });
 
 document.querySelector(".again").addEventListener("click", function () {
-  document.querySelector("body").style.backgroundColor = "#222";
-
-  document.querySelector(".number").style.width = "15rem";
-
-  document.querySelector(".number").textContent = "?";
-
-  document.querySelector(".message").textContent = "Start guessing...";
-
-  randomNumber = Math.trunc(Math.random() * 20 + 1);
+  randomNumber = createRandomNumber();
   score = 20;
 
-  document.querySelector(".score").textContent = score;
+  updateScore();
+  displayMessage("Start guessing...");
+  setBackgroundColor("#222");
 
+  document.querySelector(".number").style.width = "15rem";
+  document.querySelector(".number").textContent = "?";
   document.querySelector(".guess").value = "";
 });
